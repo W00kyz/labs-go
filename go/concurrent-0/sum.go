@@ -17,9 +17,8 @@ func readFile(filePath string) ([]byte, error) {
 }
 
 // sum all bytes of a file
-func sum(ch chan typeSum) {
-	channel := <-ch
-	data, _ := readFile(channel.filepath)
+func sum(filepath string, ch chan typeSum) {
+	data, _ := readFile(filepath)
 
 	// if err != nil {
 	// 	return 0, err
@@ -30,7 +29,8 @@ func sum(ch chan typeSum) {
 		_sum += int(b)
 	}
 
-	channel.sum = _sum
+	channel := typeSum{filepath, _sum}
+
 	ch <- channel
 }
 
@@ -53,9 +53,7 @@ func main() {
 	var totalSum int64
 	sums := make(map[int][]string)
 	for _, path := range os.Args[1:] {
-		inSum := typeSum{path, 0}
-		sumChannel <- inSum
-		go sum(sumChannel)
+		go sum(path, sumChannel)
 		outSum := <-sumChannel
 		totalSum += int64(outSum.sum)
 
