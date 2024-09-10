@@ -46,8 +46,6 @@ func main() {
 		return
 	}
 
-	join := make(chan int)
-
 	sumChannel := make(chan typeSum)
 
 	var totalSum int64
@@ -56,10 +54,10 @@ func main() {
 		go sum(path, sumChannel)
 	}
 
-	for _, path := range os.Args[1:] {
+	for i := 0; i < len(os.Args[1:]); i++ {
 		outSum := <-sumChannel
 		totalSum += int64(outSum.sum)
-		sums[outSum.sum] = append(sums[outSum.sum], path)
+		sums[outSum.sum] = append(sums[outSum.sum], outSum.filepath)
 	}
 
 	fmt.Println(totalSum)
@@ -69,7 +67,5 @@ func main() {
 			fmt.Printf("Sum %d: %v\n", sum, files)
 		}
 	}
-
-	<-join
 
 }
