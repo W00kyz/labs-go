@@ -54,9 +54,11 @@ func main() {
 	sums := make(map[int][]string)
 	for _, path := range os.Args[1:] {
 		go sum(path, sumChannel)
+	}
+
+	for _, path := range os.Args[1:] {
 		outSum := <-sumChannel
 		totalSum += int64(outSum.sum)
-
 		sums[outSum.sum] = append(sums[outSum.sum], path)
 	}
 
